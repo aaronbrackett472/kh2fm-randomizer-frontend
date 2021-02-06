@@ -41,14 +41,21 @@ export const TabPaneSpoilerLogs: React.FC<Props> = ({ active }) => {
 		}
 	}, [configuration]);
 
-	const [visible, setVisible] = useState<boolean>(false);
+	const [becameVisible, setBecameVisible] = useState<boolean>(false);
+	const [descriptionVisible, setDescriptionVisible] = useState<boolean>(false);
 
 	const inputRef = useRef<Input | null>();
 
-	const handleVisible = useCallback((state: boolean) => {
+	const handleBecameVisible = useCallback((state: boolean) => {
 		if (state) setTimeout(() => inputRef.current?.select());
 
-		setVisible(state);
+		setBecameVisible(state);
+	}, []);
+
+	const handleDescriptionVisible = useCallback((state: boolean) => {
+		if (state) setTimeout(() => inputRef.current?.select());
+
+		setDescriptionVisible(state);
 	}, []);
 
 	useEffect(() => {
@@ -56,7 +63,7 @@ export const TabPaneSpoilerLogs: React.FC<Props> = ({ active }) => {
 			if (active && (event.metaKey || event.ctrlKey) && event.key === "f") {
 				event.preventDefault();
 
-				handleVisible(!visible);
+				handleBecameVisible(!becameVisible);
 			}
 		};
 
@@ -65,7 +72,7 @@ export const TabPaneSpoilerLogs: React.FC<Props> = ({ active }) => {
 		return () => {
 			document.removeEventListener("keydown", listener);
 		};
-	}, [active, visible, handleVisible]);
+	}, [active, becameVisible, handleBecameVisible]);
 
 	const dataSource = useMemo<T[] | undefined>(() => {
 		return seed
@@ -129,7 +136,50 @@ export const TabPaneSpoilerLogs: React.FC<Props> = ({ active }) => {
 				onFilter={(value, record) => record.name === value}
 			/>
 
-			<Table.Column<T> title="Description" dataIndex="description" key="key" />
+			<Table.Column<T> 
+				title="Description" 
+				dataIndex="description" 
+				key="key" 
+				filterIcon={<SearchOutlined />}
+				filterDropdown={({
+					setSelectedKeys,
+					selectedKeys,
+					confirm,
+					clearFilters,
+				}: FilterDropdownProps) => (
+					<div style={{ padding: 8 }}>
+						<Input
+							placeholder="Search Description"
+							value={selectedKeys[0]}
+							onChange={e =>
+								setSelectedKeys(e.target.value ? [e.target.value] : [])
+							}
+							onPressEnter={confirm}
+							style={{ width: 188, marginBottom: 8, display: "block" }}
+							ref={node => {
+								inputRef.current = node;
+							}}
+						/>
+						<Space>
+							<Button
+								type="primary"
+								onClick={confirm}
+								size="small"
+								style={{ width: 90 }}
+							>
+								Search
+							</Button>
+							<Button onClick={clearFilters} size="small" style={{ width: 90 }}>
+								Reset
+							</Button>
+						</Space>
+					</div>
+				)}
+				onFilter={(value, record) =>
+					record.description.toLowerCase().includes((value as string).toLowerCase())
+				}
+				filterDropdownVisible={descriptionVisible}
+				onFilterDropdownVisibleChange={handleDescriptionVisible}/>
 
 			<Table.Column<T> title="Type" dataIndex="type" key="key" />
 
@@ -175,8 +225,8 @@ export const TabPaneSpoilerLogs: React.FC<Props> = ({ active }) => {
 				onFilter={(value, record) =>
 					record.became.toLowerCase().includes((value as string).toLowerCase())
 				}
-				filterDropdownVisible={visible}
-				onFilterDropdownVisibleChange={handleVisible}
+				filterDropdownVisible={becameVisible}
+				onFilterDropdownVisibleChange={handleBecameVisible}
 			/>
 
 			<Table.Column<T> title="Original" dataIndex="original" key="key" />
