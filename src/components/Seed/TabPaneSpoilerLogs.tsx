@@ -30,8 +30,7 @@ type T = {
 	original: string;
 };
 
-const getFilteredColumn = (title: string, index: string, inputRef: any, visible: any, handleVisible: any) => {
-	const placeholderTitle = `Search ${title}`;
+const getFilteredColumn = (title: string, index: string, placeholderTitle: string, inputRef: any, visible: any, handleVisible: any) => {
 	return(
 		<Table.Column<T> 
 			title={title}
@@ -177,8 +176,8 @@ export const TabPaneSpoilerLogs: React.FC<Props> = ({ active }) => {
 		);
 	}, [seed]);
 
-	const descriptionColumn = getFilteredColumn("Description", "description", inputRef, descriptionVisible, handleDescriptionVisible);
-	const becameColumn = getFilteredColumn("Became", "became", inputRef, becameVisible, handleBecameVisible);
+	const descriptionColumn = getFilteredColumn("Description", "description", "Search Description", inputRef, descriptionVisible, handleDescriptionVisible);
+	const becameColumn = getFilteredColumn("Became", "became", "Search Reward", inputRef, becameVisible, handleBecameVisible);
 
 	return (
 		<Table<T> dataSource={dataSource} loading={loading}>
