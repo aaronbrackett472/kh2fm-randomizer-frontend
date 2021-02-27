@@ -30,6 +30,57 @@ type T = {
 	original: string;
 };
 
+const getFilteredColumn = (title: string, index: string, inputRef: any, visible: any, handleVisible: any) => {
+	const placeholderTitle = `Search ${title}`;
+	return(
+		<Table.Column<T> 
+			title={title}
+			dataIndex={index}
+			key="key" 
+			filterIcon={<SearchOutlined />}
+			filterDropdown={({
+				setSelectedKeys,
+				selectedKeys,
+				confirm,
+				clearFilters,
+			}: FilterDropdownProps) => (
+				<div style={{ padding: 8 }}>
+					<Input
+						placeholder={placeholderTitle}
+						value={selectedKeys[0]}
+						onChange={e =>
+							setSelectedKeys(e.target.value ? [e.target.value] : [])
+						}
+						onPressEnter={confirm}
+						style={{ width: 188, marginBottom: 8, display: "block" }}
+						ref={node => {
+							inputRef.current = node;
+						}}
+					/>
+					<Space>
+						<Button
+							type="primary"
+							onClick={confirm}
+							size="small"
+							style={{ width: 90 }}
+						>
+							Search
+						</Button>
+						<Button onClick={clearFilters} size="small" style={{ width: 90 }}>
+							Reset
+						</Button>
+					</Space>
+				</div>
+			)}
+			onFilter={(value, record) =>
+				record[index].toLowerCase().includes((value as string).toLowerCase())
+			}
+			filterDropdownVisible={visible}
+			onFilterDropdownVisibleChange={handleVisible}
+		/>
+	);
+};
+
 export const TabPaneSpoilerLogs: React.FC<Props> = ({ active }) => {
 	const { seed, loading, configuration } = useContext(SeedContext);
 
@@ -47,7 +98,8 @@ export const TabPaneSpoilerLogs: React.FC<Props> = ({ active }) => {
 	const inputRef = useRef<Input | null>();
 
 	const handleBecameVisible = useCallback((state: boolean) => {
-		if (state) setTimeout(() => inputRef.current?.select());
+
+	if (state) setTimeout(() => inputRef.current?.select());
 
 		setBecameVisible(state);
 	}, []);
@@ -76,7 +128,7 @@ export const TabPaneSpoilerLogs: React.FC<Props> = ({ active }) => {
 
 	const dataSource = useMemo<T[] | undefined>(() => {
 		return seed
-			?.filter(value => value.reward.value !== "00000000")
+			?.filter(value => value.reward.value != "00000000")
 			.map<T>(value => ({
 				key: `${value.location.description}: ${value.location.reward.name} -> ${value.reward.name}`,
 				name:
@@ -125,6 +177,9 @@ export const TabPaneSpoilerLogs: React.FC<Props> = ({ active }) => {
 		);
 	}, [seed]);
 
+	const descriptionColumn = getFilteredColumn("Description", "description", inputRef, descriptionVisible, handleDescriptionVisible);
+	const becameColumn = getFilteredColumn("Became", "became", inputRef, becameVisible, handleBecameVisible);
+
 	return (
 		<Table<T> dataSource={dataSource} loading={loading}>
 			<Table.Column<T>
@@ -136,98 +191,12 @@ export const TabPaneSpoilerLogs: React.FC<Props> = ({ active }) => {
 				onFilter={(value, record) => record.name === value}
 			/>
 
-			<Table.Column<T> 
-				title="Description" 
-				dataIndex="description" 
-				key="key" 
-				filterIcon={<SearchOutlined />}
-				filterDropdown={({
-					setSelectedKeys,
-					selectedKeys,
-					confirm,
-					clearFilters,
-				}: FilterDropdownProps) => (
-					<div style={{ padding: 8 }}>
-						<Input
-							placeholder="Search Description"
-							value={selectedKeys[0]}
-							onChange={e =>
-								setSelectedKeys(e.target.value ? [e.target.value] : [])
-							}
-							onPressEnter={confirm}
-							style={{ width: 188, marginBottom: 8, display: "block" }}
-							ref={node => {
-								inputRef.current = node;
-							}}
-						/>
-						<Space>
-							<Button
-								type="primary"
-								onClick={confirm}
-								size="small"
-								style={{ width: 90 }}
-							>
-								Search
-							</Button>
-							<Button onClick={clearFilters} size="small" style={{ width: 90 }}>
-								Reset
-							</Button>
-						</Space>
-					</div>
-				)}
-				onFilter={(value, record) =>
-					record.description.toLowerCase().includes((value as string).toLowerCase())
-				}
-				filterDropdownVisible={descriptionVisible}
-				onFilterDropdownVisibleChange={handleDescriptionVisible}/>
+			{descriptionColumn}
 
 			<Table.Column<T> title="Type" dataIndex="type" key="key" />
 
-			<Table.Column<T>
-				title="Became"
-				dataIndex="became"
-				key="key"
-				filterIcon={<SearchOutlined />}
-				filterDropdown={({
-					setSelectedKeys,
-					selectedKeys,
-					confirm,
-					clearFilters,
-				}: FilterDropdownProps) => (
-					<div style={{ padding: 8 }}>
-						<Input
-							placeholder="Search Reward"
-							value={selectedKeys[0]}
-							onChange={e =>
-								setSelectedKeys(e.target.value ? [e.target.value] : [])
-							}
-							onPressEnter={confirm}
-							style={{ width: 188, marginBottom: 8, display: "block" }}
-							ref={node => {
-								inputRef.current = node;
-							}}
-						/>
-						<Space>
-							<Button
-								type="primary"
-								onClick={confirm}
-								size="small"
-								style={{ width: 90 }}
-							>
-								Search
-							</Button>
-							<Button onClick={clearFilters} size="small" style={{ width: 90 }}>
-								Reset
-							</Button>
-						</Space>
-					</div>
-				)}
-				onFilter={(value, record) =>
-					record.became.toLowerCase().includes((value as string).toLowerCase())
-				}
-				filterDropdownVisible={becameVisible}
-				onFilterDropdownVisibleChange={handleBecameVisible}
-			/>
+			{becameColumn}
+
 
 			<Table.Column<T> title="Original" dataIndex="original" key="key" />
 		</Table>
