@@ -98,7 +98,8 @@ export const TabPaneSpoilerLogs: React.FC<Props> = ({ active }) => {
 	const inputRef = useRef<Input | null>();
 
 	const handleBecameVisible = useCallback((state: boolean) => {
-		if (state) setTimeout(() => inputRef.current?.select());
+
+	if (state) setTimeout(() => inputRef.current?.select());
 
 		setBecameVisible(state);
 	}, []);
@@ -195,6 +196,7 @@ export const TabPaneSpoilerLogs: React.FC<Props> = ({ active }) => {
 			<Table.Column<T> title="Type" dataIndex="type" key="key" />
 
 			{becameColumn}
+
 
 			<Table.Column<T> title="Original" dataIndex="original" key="key" />
 		</Table>
