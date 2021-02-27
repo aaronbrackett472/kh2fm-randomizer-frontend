@@ -1,9 +1,7 @@
-import { SliderValue } from "antd/lib/slider";
+import { Include, RandomizingAction } from "@valaxor/kh2fm-randomizer";
 import React, { useContext } from "react";
 import { SeedContext } from "../../context/seed";
 import { useValueMapper } from "../../hooks/useValueMapper";
-import { RandomizingAction } from "../../settings/enums";
-import { Include } from "../../settings/Include";
 import { Marks, SettingSlider } from "./SettingSlider";
 
 export const TabPaneInclude: React.FC = () => {
@@ -12,7 +10,7 @@ export const TabPaneInclude: React.FC = () => {
 		worlds: [worlds],
 	} = useContext(SeedContext);
 
-	const mapValue = useValueMapper<Include, SliderValue>([include, setInclude]);
+	const mapValue = useValueMapper<Include, number>([include, setInclude]);
 
 	return (
 		<div className="tab-pane">

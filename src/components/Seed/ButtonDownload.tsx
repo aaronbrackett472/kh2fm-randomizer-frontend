@@ -1,12 +1,12 @@
+import { createPnach } from "@valaxor/kh2fm-randomizer";
 import { Button, Dropdown, Menu } from "antd";
-import { ClickParam } from "antd/lib/menu";
+import { MenuProps } from "antd/lib/menu";
 import downloadjs from "downloadjs";
 import React, { useCallback, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { SeedContext } from "../../context/seed";
 import { firebase } from "../../firebase";
-import { createPnach } from "../../helpers/createPnach";
-import { useSeedURL } from "../../seed/useSeedURL";
+import { useSeedURL } from "../../hooks/useSeedURL";
 import { GoAModModalDownload } from "../GoAMod/GoAModModalDownload";
 
 export const ButtonDownload: React.FC = () => {
@@ -21,11 +21,11 @@ export const ButtonDownload: React.FC = () => {
 
 	const { urlWithSettings: urlWithParams } = useSeedURL();
 
-	const download = useCallback(
-		async (event: ClickParam) => {
+	const download = useCallback<NonNullable<MenuProps["onClick"]>>(
+		async event => {
 			const pnach = createPnach(seed!, configuration);
 
-			downloadjs(pnach, event.key, "application/octet-stream");
+			downloadjs(pnach, event.key as string, "application/octet-stream");
 
 			firebase.analytics().logEvent("seed_downloaded", {
 				seed: configuration.name,

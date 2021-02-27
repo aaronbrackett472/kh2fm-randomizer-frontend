@@ -1,10 +1,8 @@
+import { bosses, Experimental } from "@valaxor/kh2fm-randomizer";
 import { Divider, Typography } from "antd";
-import { SliderValue } from "antd/lib/slider";
 import React, { useContext } from "react";
 import { SeedContext } from "../../context/seed";
-import { bosses } from "../../enemyLocations";
 import { useValueMapper } from "../../hooks/useValueMapper";
-import { Experimental } from "../../settings/Experimental";
 import { SettingSlider, SettingSliderProps } from "./SettingSlider";
 
 interface Setting extends SettingSliderProps {
@@ -27,7 +25,7 @@ export const experimentalSettings: Setting[] = [
 export const TabPaneExperimental: React.FC = () => {
 	const { experimental } = useContext(SeedContext);
 
-	const mapValue = useValueMapper<Experimental, SliderValue>(experimental);
+	const mapValue = useValueMapper<Experimental, number>(experimental);
 
 	return (
 		<div>

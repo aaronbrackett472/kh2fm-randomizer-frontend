@@ -1,14 +1,13 @@
-import { SliderValue } from "antd/lib/slider";
+import { Worlds } from "@valaxor/kh2fm-randomizer";
 import React, { useContext } from "react";
 import { SeedContext } from "../../context/seed";
 import { useValueMapper } from "../../hooks/useValueMapper";
-import { Worlds } from "../../settings/Worlds";
 import { Marks, SettingSlider } from "./SettingSlider";
 
 export const TabPaneWorlds: React.FC = () => {
 	const { worlds } = useContext(SeedContext);
 
-	const mapValue = useValueMapper<Worlds, SliderValue>(worlds);
+	const mapValue = useValueMapper<Worlds, number>(worlds);
 
 	return (
 		<div className="tab-pane">
